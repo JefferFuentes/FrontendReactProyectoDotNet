@@ -1,14 +1,13 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import ProfesorForm from "../../components/ProfesorForm";
+import ProfesorForm from "../../components/ProfesorForm"; 
 
 export default function CreateProfesor() {
   const navigate = useNavigate();
 
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
-  const [especialidad, setEspecialidad] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
@@ -16,16 +15,30 @@ export default function CreateProfesor() {
     setError("");
 
     try {
-      await axios.post("http://localhost:5080/api/profesores", {
-        nombre,
-        email,
-        especialidad,
-      });
+      // 1️⃣ Recuperamos el token almacenado en el Login
+      const token = localStorage.getItem("token");
 
+      // 2️⃣ Enviamos la petición POST adjuntando el token (sin mandar especialidad)
+      await axios.post(
+        "http://localhost:5080/api/profesores", 
+        {
+          nombre,
+          email,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // 🔑 Permiso de Administrador para .NET
+          },
+        }
+      );
+
+      // Si todo sale bien, volvemos a la lista de profesores
       navigate("/profesores");
     } catch (err) {
+      console.error(err);
       setError(
-        err.response?.data?.message || "Error al crear el profesor"
+        err.response?.data?.message || 
+        "Error al crear el profesor. Asegúrate de tener permisos de Administrador."
       );
     }
   };
@@ -49,8 +62,6 @@ export default function CreateProfesor() {
         setNombre={setNombre}
         email={email}
         setEmail={setEmail}
-        especialidad={especialidad}
-        setEspecialidad={setEspecialidad}
         error={error}
         onSubmit={handleSubmit}
         submitText="Crear profesor"

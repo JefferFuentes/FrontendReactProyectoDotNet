@@ -15,7 +15,7 @@ import ProfesoresIndex from "../pages/Profesores/Index";
 import ProfesoresCreate from "../pages/Profesores/Create";
 import ProfesoresEdit from "../pages/Profesores/Edit";
 import ProfesoresDetails from "../pages/Profesores/Details";
-//import ProfesoresDelete from "../pages/Profesores/Delete";
+import ProfesoresDelete from "../pages/Profesores/Delete";
 
 import CategoriasIndex from "../pages/Categorias/Index";
 import CategoriasCreate from "../pages/Categorias/Create";
@@ -23,22 +23,31 @@ import CategoriasEdit from "../pages/Categorias/Edit";
 import CategoriasDetails from "../pages/Categorias/Details";
 import CategoriasDelete from "../pages/Categorias/Delete";
 
+// 🛠️ Importaciones de Estudiantes (Físicamente existentes en tu carpeta)
 import EstudiantesIndex from "../pages/Estudiantes/Index";
 import EstudiantesCreate from "../pages/Estudiantes/Create";
 import EstudiantesEdit from "../pages/Estudiantes/Edit";
 import EstudiantesDetails from "../pages/Estudiantes/Details";
 import EstudiantesDelete from "../pages/Estudiantes/Delete";
 
+// 🛠️ Importaciones de Matrículas (Solo Index existe según tu captura)
 import MatriculasIndex from "../pages/Matriculas/Index";
 
 function rutasCrud(base, { Index, Create, Edit, Details, Delete }) {
   return (
     <>
       <Route path={base} element={<Index />} />
-      <Route path={`${base}/crear`} element={<Create />} />
-      <Route path={`${base}/:id`} element={<Details />} />
-      <Route path={`${base}/:id/editar`} element={<Edit />} />
-      <Route path={`${base}/:id/eliminar`} element={<Delete />} />
+      
+      {Create && <Route path={`${base}/crear`} element={<Create />} />}
+      {Create && <Route path={`${base}/create`} element={<Create />} />}
+      
+      {Edit && <Route path={`${base}/edit/:id`} element={<Edit />} />}
+      {Edit && <Route path={`${base}/:id/editar`} element={<Edit />} />}
+      
+      {Delete && <Route path={`${base}/:id/eliminar`} element={<Delete />} />}
+      {Delete && <Route path={`${base}/delete/:id`} element={<Delete />} />}
+      
+      {Details && <Route path={`${base}/:id`} element={<Details />} />}
     </>
   );
 }
@@ -52,37 +61,43 @@ export default function AppRouter() {
       <Route path="/home" element={<Home />} />
 
       <Route element={<PrivateLayout />}>
-      {rutasCrud("/cursos", {
-        Index: CursosIndex,
-        Create: CursosCreate,
-        Edit: CursosEdit,
-        Details: CursosDetails,
-        Delete: CursosDelete,
-      })}
+        {rutasCrud("/cursos", {
+          Index: CursosIndex,
+          Create: CursosCreate,
+          Edit: CursosEdit,
+          Details: CursosDetails,
+          Delete: CursosDelete,
+        })}
 
-      {rutasCrud("/profesores", {
-        Index: ProfesoresIndex,
-        Create: ProfesoresCreate,
-        Edit: ProfesoresEdit,
-        Details: ProfesoresDetails,
-       // Delete: ProfesoresDelete,
-      })}
+        {rutasCrud("/profesores", {
+          Index: ProfesoresIndex,
+          Create: ProfesoresCreate,
+          Edit: ProfesoresEdit,
+          Details: ProfesoresDetails,
+          Delete: ProfesoresDelete,
+        })}
 
-      {rutasCrud("/categorias", {
-        Index: CategoriasIndex,
-        Create: CategoriasCreate,
-        Edit: CategoriasEdit,
-        Details: CategoriasDetails,
-        Delete: CategoriasDelete,
-      })}
+        {rutasCrud("/categorias", {
+          Index: CategoriasIndex,
+          Create: CategoriasCreate,
+          Edit: CategoriasEdit,
+          Details: CategoriasDetails,
+          Delete: CategoriasDelete,
+        })}
 
-      {rutasCrud("/matriculas", {
+        {/* 🛠️ Solo mapeamos Index para evitar que React explote */}
+        {rutasCrud("/matriculas", {
           Index: MatriculasIndex
-      })}
+        })}
 
-      {rutasCrud("/estudiantes",{
-          Index: EstudiantesIndex
-      })}
+        {/* 🛠️ Mapeado completo porque en Estudiantes sí tienes todos los archivos creados */}
+        {rutasCrud("/estudiantes", {
+          Index: EstudiantesIndex,
+          Create: EstudiantesCreate,
+          Edit: EstudiantesEdit,
+          Details: EstudiantesDetails,
+          Delete: EstudiantesDelete,
+        })}
       </Route>
     </Routes>
   );

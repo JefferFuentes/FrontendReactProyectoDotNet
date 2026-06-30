@@ -21,10 +21,14 @@ export default function CreateCurso() {
         axios.get("http://localhost:5080/api/categorias"),
       ]);
 
-      setProfesores(profesoresRes.data);
-      setCategorias(categoriasRes.data);
+      // 🔹 Extraemos los arreglos correctamente si vienen envueltos en $values o data
+      const listaProfesores = profesoresRes.data.$values || profesoresRes.data.data || profesoresRes.data;
+      const listaCategorias = categoriasRes.data.$values || categoriasRes.data.data || categoriasRes.data;
+
+      setProfesores(Array.isArray(listaProfesores) ? listaProfesores : []);
+      setCategorias(Array.isArray(listaCategorias) ? listaCategorias : []);
     } catch (err) {
-      setError("Error al cargar profesores y categorías.");
+      setError("Error al cargar los selectores de profesores y categorías.");
     }
   };
 
@@ -32,16 +36,27 @@ export default function CreateCurso() {
     try {
       setError("");
 
+      // 1. Recuperamos el token de autenticación que guardó el Login
+      const token = localStorage.getItem("token");
+
+      // 2. Enviamos la petición incluyendo los encabezados de autorización requeridos por .NET
       await axios.post(
         "http://localhost:5080/api/cursos",
-        curso
+        curso,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
+      // Si todo sale bien, regresa a la lista adaptada
       navigate("/cursos");
     } catch (err) {
+      // Capturamos el mensaje de error exacto que devuelva el servidor
       setError(
         err.response?.data?.message ||
-        "Error al crear el curso."
+        "Error al crear el curso. Asegúrate de tener permisos de Administrador."
       );
     }
   };
@@ -61,7 +76,7 @@ export default function CreateCurso() {
       </p>
 
       {error && (
-        <div className="mt-4 rounded-lg bg-red-100 p-3 text-red-700">
+        <div className="mt-4 rounded-lg bg-red-100 p-3 text-red-700 text-sm">
           {error}
         </div>
       )}
@@ -76,7 +91,7 @@ export default function CreateCurso() {
       <div className="mt-4">
         <button
           onClick={() => navigate("/cursos")}
-          className="text-sm font-medium text-gray-500 hover:text-gray-900"
+          className="text-sm font-medium text-gray-500 hover:text-gray-900 cursor-pointer"
         >
           Cancelar
         </button>

@@ -9,137 +9,116 @@ export default function EstudiantesList() {
 
   const navigate = useNavigate();
 
-  // 🔹 cargar estudiantes
-  useEffect(() => {
+ useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    // 1️⃣ Cambiamos la URL a la API de usuarios general
     axios
-      .get("http://localhost:5080/api/usuarios")
+      .get("http://localhost:5080/api/usuarios", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
       .then(res => {
-        setEstudiantes(res.data);
+        const listaLimpia = res.data.$values || res.data.data || res.data;
+        
+        if (Array.isArray(listaLimpia)) {
+          // 2️⃣ Filtramos para que el Administrador solo vea las cuentas con Rol === "Estudiante"
+          const soloEstudiantes = listaLimpia.filter(user => user.rol === "Estudiante" || user.Rol === "Estudiante");
+          setEstudiantes(soloEstudiantes);
+        } else {
+          setEstudiantes([]);
+        }
         setLoading(false);
       })
-      .catch(() => {
-        setError("Error al cargar estudiantes");
+      .catch((err) => {
+        console.error("Error cargando usuarios:", err);
+        setError("Error al conectar con el endpoint de usuarios de la API.");
         setLoading(false);
       });
   }, []);
 
-  if (loading) return <p>Cargando...</p>;
+  if (loading) return <p className="text-center mt-10 text-gray-500 font-medium">Cargando alumnos inscritos...</p>;
 
   return (
     <div className="mt-8">
-
-      {/* Header */}
       <div className="flex items-center justify-between">
-
         <div>
-          <p className="mb-1 text-sm font-semibold uppercase tracking-wide text-[#72243E]">
-            Estudiante
+          <p className="mb-1 text-sm font-semibold uppercase tracking-wide text-[#3C3489]">
+            Panel de Control
           </p>
-
           <h1 className="font-serif text-3xl font-bold text-gray-900">
-            Estudiantes
+            Estudiantes Inscritos
           </h1>
         </div>
 
+        {/* 🛠️ Corregido: Apunta exactamente a la ruta en español */}
         <button
-          onClick={() => navigate("/estudiantes/create")}
-          className="rounded-lg bg-[#2b2f26] px-5 py-2.5 font-semibold text-[#f4efe3] hover:bg-[#1e211a]"
+          onClick={() => navigate("/estudiantes/crear")}
+          className="rounded-lg bg-[#2b2f26] px-5 py-2.5 font-semibold text-[#f4efe3] hover:bg-[#1e211a] cursor-pointer"
         >
-          Nuevo estudiante
+          Inscribir nuevo estudiante
         </button>
-
       </div>
 
-      {/* Error */}
       {error && (
-        <p className="mt-4 text-sm text-red-600">{error}</p>
+        <p className="mt-4 text-sm text-red-600 rounded-lg bg-red-50 p-3">{error}</p>
       )}
 
-      {/* Table */}
-      <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
+      <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
         <table className="w-full text-left">
-
           <thead>
             <tr className="border-b bg-gray-50">
-              <th className="px-5 py-3 text-sm font-medium text-gray-500">
-                Nombre
-              </th>
-              <th className="px-5 py-3 text-sm font-medium text-gray-500">
-                Email
-              </th>
+              <th className="px-5 py-3 text-sm font-medium text-gray-500">Nombre Completo</th>
+              <th className="px-5 py-3 text-sm font-medium text-gray-500">Correo Electrónico</th>
               <th></th>
             </tr>
           </thead>
-
           <tbody>
-
             {estudiantes.length === 0 ? (
               <tr>
                 <td colSpan="3" className="px-5 py-10 text-center text-gray-500">
-                  No hay estudiantes.
+                  No hay estudiantes inscritos.{" "}
+                  {/* 🛠️ Corregido también aquí para evitar el error 404 de la consola */}
                   <button
-                    onClick={() => navigate("/estudiantes/create")}
-                    className="ml-1 font-medium text-gray-900 underline"
+                    onClick={() => navigate("/estudiantes/crear")}
+                    className="ml-1 font-medium text-gray-900 underline cursor-pointer"
                   >
                     Crea el primero
                   </button>
                 </td>
               </tr>
             ) : (
-
               estudiantes.map((item) => (
-                <tr
-                  key={item.id}
-                  className="border-b last:border-0 hover:bg-gray-50"
-                >
-
-                  <td className="px-5 py-3 font-medium text-gray-900">
-                    {item.nombre}
-                  </td>
-
-                  <td className="px-5 py-3 text-gray-500">
-                    {item.email}
-                  </td>
-
-                  <td className="px-5 py-3 text-right text-sm">
-
+                <tr key={item.id} className="border-b last:border-0 hover:bg-gray-50">
+                  <td className="px-5 py-3 font-medium text-gray-900">{item.nombre}</td>
+                  <td className="px-5 py-3 text-gray-500">{item.email}</td>
+                  <td className="px-5 py-3 text-right text-sm space-x-2">
                     <button
                       onClick={() => navigate(`/estudiantes/edit/${item.id}`)}
-                      className="font-medium text-gray-600 hover:text-gray-900"
+                      className="font-medium text-gray-600 hover:text-gray-900 cursor-pointer"
                     >
                       Editar
                     </button>
-
-                    <span className="mx-1 text-gray-300">|</span>
-
+                    <span className="text-gray-300">|</span>
                     <button
                       onClick={() => navigate(`/estudiantes/${item.id}`)}
-                      className="font-medium text-gray-600 hover:text-gray-900"
+                      className="font-medium text-gray-600 hover:text-gray-900 cursor-pointer"
                     >
                       Detalles
                     </button>
-
-                    <span className="mx-1 text-gray-300">|</span>
-
+                    <span className="text-gray-300">|</span>
                     <button
                       onClick={() => navigate(`/estudiantes/delete/${item.id}`)}
-                      className="font-medium text-red-600 hover:text-red-800"
+                      className="font-medium text-red-600 hover:text-red-800 cursor-pointer"
                     >
-                      Eliminar
+                      Dar de baja
                     </button>
-
                   </td>
-
                 </tr>
               ))
-
             )}
-
           </tbody>
-
         </table>
       </div>
-
     </div>
   );
 }
