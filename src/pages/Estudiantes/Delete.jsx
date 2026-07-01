@@ -12,7 +12,7 @@ export default function DeleteEstudiante() {
   // 🔹 cargar estudiante
   useEffect(() => {
     axios
-      .get(`http://localhost:5080/api/estudiantes/${id}`)
+      .get(`http://localhost:5080/api/usuarios/${id}`)
       .then(res => setEstudiante(res.data))
       .catch(() => setError("No se pudo cargar el estudiante"));
   }, [id]);
@@ -20,7 +20,7 @@ export default function DeleteEstudiante() {
   // 🔹 eliminar
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:5080/api/estudiantes/${id}`);
+      await axios.delete(`http://localhost:5080/api/usuarios/${id}`);
       navigate("/estudiantes");
     } catch {
       setError("Error al eliminar estudiante");
@@ -38,7 +38,7 @@ export default function DeleteEstudiante() {
       </p>
 
       <h1 className="font-serif text-3xl font-bold text-gray-900">
-        ¿Eliminar este estudiante?
+        ¿Dar de baja a este estudiante?
       </h1>
 
       <p className="mt-1 text-sm text-gray-500">

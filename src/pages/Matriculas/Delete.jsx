@@ -3,27 +3,45 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function DeleteMatricula() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+    const { id } = useParams();
+    const navigate = useNavigate();
 
-  const [matricula, setMatricula] = useState(null);
-  const [error, setError] = useState("");
+    const [matricula, setMatricula] = useState(null);
+    const [error, setError] = useState("");
 
-  useEffect(() => {
-    axios
-      .get(`http://localhost:5000/api/matriculas/${id}`)
-      .then((res) => setMatricula(res.data))
-      .catch(() => setError("No se pudo cargar la matrícula."));
-  }, [id]);
+    // ← agregar estas dos líneas
+    const token = localStorage.getItem("token");
+    const rol = localStorage.getItem("rol");
 
-  async function eliminar() {
-    try {
-      await axios.delete(`http://localhost:5000/api/matriculas/${id}`);
-      navigate("/matriculas");
-    } catch {
-      setError("No se pudo eliminar la matrícula.");
+    useEffect(() => {
+        const url = rol === "Administrador"
+            ? `http://localhost:5080/api/matriculas/${id}`
+            : `http://localhost:5080/api/matriculas/mis-matriculas/${id}`;
+
+        axios
+            .get(url, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            .then((res) => setMatricula(res.data))
+            .catch(() => setError("No se pudo cargar la matrícula."));
+    }, [id]);
+
+    async function eliminar() {
+        try {
+            // ← URL distinta según el rol
+            const url = rol === "Administrador"
+                ? `http://localhost:5080/api/matriculas/${id}`
+                : `http://localhost:5080/api/matriculas/cancelar/${id}`;
+
+            await axios.delete(url, {
+                headers: { Authorization: `Bearer ${token}` }  // ← agregar
+            });
+
+            navigate("/matriculas");
+        } catch {
+            setError("No se pudo eliminar la matrícula.");
+        }
     }
-  }
 
   if (!matricula) return <p>Cargando...</p>;
 
@@ -56,7 +74,7 @@ export default function DeleteMatricula() {
               </p>
 
               <p className="mt-1 text-gray-900">
-                {matricula.estudiante?.nombre}
+                {matricula.usuario?.nombre}
               </p>
             </div>
 
@@ -129,12 +147,12 @@ export default function DeleteMatricula() {
 
       <div className="mt-6 flex gap-4">
 
-        <button
-          onClick={eliminar}
-          className="rounded-lg bg-red-600 px-5 py-2.5 font-semibold text-white hover:bg-red-700"
-        >
-          Eliminar matrícula
-        </button>
+              <button
+                  onClick={eliminar}
+                  className="rounded-lg bg-red-600 px-5 py-2.5 font-semibold text-white hover:bg-red-700"
+              >
+                  {rol === "Administrador" ? "Eliminar matrícula" : "Dar de baja"}
+              </button>
 
         <button
           onClick={() => navigate("/matriculas")}

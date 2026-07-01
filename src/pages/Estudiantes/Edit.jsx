@@ -18,7 +18,7 @@ export default function EditEstudiante() {
   const cargarEstudiante = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5080/api/estudiantes/${id}`
+        `http://localhost:5080/api/usuarios/${id}`
       );
 
       setNombre(res.data.nombre);

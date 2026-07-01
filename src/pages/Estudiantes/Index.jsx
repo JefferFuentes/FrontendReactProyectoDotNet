@@ -12,7 +12,6 @@ export default function EstudiantesList() {
  useEffect(() => {
     const token = localStorage.getItem("token");
 
-    // 1️⃣ Cambiamos la URL a la API de usuarios general
     axios
       .get("http://localhost:5080/api/usuarios", {
         headers: { Authorization: `Bearer ${token}` }
@@ -21,7 +20,7 @@ export default function EstudiantesList() {
         const listaLimpia = res.data.$values || res.data.data || res.data;
         
         if (Array.isArray(listaLimpia)) {
-          // 2️⃣ Filtramos para que el Administrador solo vea las cuentas con Rol === "Estudiante"
+          
           const soloEstudiantes = listaLimpia.filter(user => user.rol === "Estudiante" || user.Rol === "Estudiante");
           setEstudiantes(soloEstudiantes);
         } else {
@@ -49,14 +48,7 @@ export default function EstudiantesList() {
             Estudiantes Inscritos
           </h1>
         </div>
-
-        {/* 🛠️ Corregido: Apunta exactamente a la ruta en español */}
-        <button
-          onClick={() => navigate("/estudiantes/crear")}
-          className="rounded-lg bg-[#2b2f26] px-5 py-2.5 font-semibold text-[#f4efe3] hover:bg-[#1e211a] cursor-pointer"
-        >
-          Inscribir nuevo estudiante
-        </button>
+        
       </div>
 
       {error && (
@@ -77,13 +69,7 @@ export default function EstudiantesList() {
               <tr>
                 <td colSpan="3" className="px-5 py-10 text-center text-gray-500">
                   No hay estudiantes inscritos.{" "}
-                  {/* 🛠️ Corregido también aquí para evitar el error 404 de la consola */}
-                  <button
-                    onClick={() => navigate("/estudiantes/crear")}
-                    className="ml-1 font-medium text-gray-900 underline cursor-pointer"
-                  >
-                    Crea el primero
-                  </button>
+                  
                 </td>
               </tr>
             ) : (
@@ -92,19 +78,7 @@ export default function EstudiantesList() {
                   <td className="px-5 py-3 font-medium text-gray-900">{item.nombre}</td>
                   <td className="px-5 py-3 text-gray-500">{item.email}</td>
                   <td className="px-5 py-3 text-right text-sm space-x-2">
-                    <button
-                      onClick={() => navigate(`/estudiantes/edit/${item.id}`)}
-                      className="font-medium text-gray-600 hover:text-gray-900 cursor-pointer"
-                    >
-                      Editar
-                    </button>
-                    <span className="text-gray-300">|</span>
-                    <button
-                      onClick={() => navigate(`/estudiantes/${item.id}`)}
-                      className="font-medium text-gray-600 hover:text-gray-900 cursor-pointer"
-                    >
-                      Detalles
-                    </button>
+                   
                     <span className="text-gray-300">|</span>
                     <button
                       onClick={() => navigate(`/estudiantes/delete/${item.id}`)}

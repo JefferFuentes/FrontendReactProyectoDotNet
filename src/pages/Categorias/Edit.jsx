@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import CategoriaForm from "../../components/CategoriaForm"; // Importación directa correcta
+import CategoriaForm from "../../components/CategoriaForm";
 
 export default function EditCategoria() {
-  const { id } = useParams(); // 🔹 Capturamos el id de la URL
+  const { id } = useParams(); 
   const navigate = useNavigate();
   
-  const [categoria, setCategoria] = useState(null); // 🔹 Estado para los datos iniciales
+  const [categoria, setCategoria] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // 1️⃣ Cargar los datos de la categoría actual para que aparezcan en los inputs
   useEffect(() => {
     const cargarCategoria = async () => {
       try {
@@ -19,8 +18,7 @@ export default function EditCategoria() {
         const res = await axios.get(`http://localhost:5080/api/categorias/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        
-        // Limpiamos el formato de .NET por si viene envuelto
+
         const dataLimpia = res.data.$values || res.data.data || res.data;
         setCategoria(dataLimpia);
         setLoading(false);
@@ -34,22 +32,17 @@ export default function EditCategoria() {
     cargarCategoria();
   }, [id]);
 
-  // 2️⃣ Enviar los datos actualizados mediante PUT
- // En src/pages/Categorias/Edit.jsx
   const editarCategoria = async (valoresActualizados) => {
     try {
       setError("");
       const token = localStorage.getItem("token");
 
-      // 🛠️ SOLUCIÓN: Creamos un objeto limpio con el ID explícito convertido a número
-      // y nos aseguramos de que coincida con lo que espera el Backend
       const payload = {
-        id: Number(id), // Oblzamos a que sea numérico igual que en el parámetro de la URL
+        id: Number(id),
         nombre: valoresActualizados.nombre,
         descripcion: valoresActualizados.descripcion
       };
 
-      // Enviamos el PUT con el payload estructurado
       await axios.put(
         `http://localhost:5080/api/categorias/${id}`, 
         payload,
@@ -86,14 +79,20 @@ export default function EditCategoria() {
         </div>
       )}
 
-      {/* 3️⃣ Renderizamos el formulario solo cuando ya tengamos los datos cargados */}
-      {categoria && (
+          {categoria && (
         <CategoriaForm
           initialData={categoria}
           onSubmit={editarCategoria}
           textoBoton="Guardar cambios"
         />
-      )}
+
+          )}
+          <button
+              onClick={() => navigate("/categorias")}
+              className="text-sm font-medium text-gray-500 hover:text-gray-900"
+          >
+              Volver a la lista
+          </button>
     </div>
   );
 }

@@ -9,20 +9,32 @@ export default function MatriculasList() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:5080/api/matriculas")
-      .then((res) => {
-        setMatriculas(res.data);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError("Error al cargar las matrículas");
-        setLoading(false);
-      });
-  }, []);
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        const rol = localStorage.getItem("rol");
 
-  if (loading) return <p>Cargando...</p>;
+        const url = rol === "Administrador"
+            ? "http://localhost:5080/api/Matriculas"
+            : "http://localhost:5080/api/Matriculas/mis-matriculas";
+
+        axios
+            .get(url, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            .then((res) => {
+                setMatriculas(res.data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.log("Status:", err.response?.status);
+                console.log("Error:", err.response?.data);
+                setError("Error: " + err.response?.status);
+                setLoading(false);
+            });
+    }, []);
+
+    if (loading) return <p>Cargando...</p>;
+    if (error) return <p>{error}</p>; // ← agregar esto
 
   return (
     <div className="mt-8">
@@ -39,12 +51,6 @@ export default function MatriculasList() {
           </h1>
         </div>
 
-        <button
-          onClick={() => navigate("/matriculas/create")}
-          className="rounded-lg bg-[#2b2f26] px-5 py-2.5 font-semibold text-[#f4efe3] hover:bg-[#1e211a]"
-        >
-          Nueva matrícula
-        </button>
       </div>
 
       {/* Error */}
@@ -69,13 +75,7 @@ export default function MatriculasList() {
             {matriculas.length === 0 ? (
               <tr>
                 <td colSpan="3" className="px-5 py-10 text-center text-gray-500">
-                  No hay matrículas.
-                  <button
-                    onClick={() => navigate("/matriculas/create")}
-                    className="ml-1 font-medium text-gray-900 underline"
-                  >
-                    Crea la primera
-                  </button>
+                  No hay matrículas
                 </td>
               </tr>
             ) : (
@@ -85,7 +85,7 @@ export default function MatriculasList() {
                   className="border-b last:border-0 hover:bg-gray-50"
                 >
                   <td className="px-5 py-3 font-medium text-gray-900">
-                    {item.estudiante?.nombre}
+                    {item.usuario?.nombre}
                   </td>
 
                   <td className="px-5 py-3 text-gray-500">
@@ -93,21 +93,7 @@ export default function MatriculasList() {
                   </td>
 
                   <td className="px-5 py-3 text-right text-sm">
-                    <button
-                      onClick={() => navigate(`/matriculas/edit/${item.id}`)}
-                      className="font-medium text-gray-600 hover:text-gray-900"
-                    >
-                      Editar
-                    </button>
 
-                    <span className="mx-1 text-gray-300">|</span>
-
-                    <button
-                      onClick={() => navigate(`/matriculas/${item.id}`)}
-                      className="font-medium text-gray-600 hover:text-gray-900"
-                    >
-                      Detalles
-                    </button>
 
                     <span className="mx-1 text-gray-300">|</span>
 

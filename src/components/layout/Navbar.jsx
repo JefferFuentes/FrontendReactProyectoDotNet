@@ -26,9 +26,10 @@ export default function Navbar() {
     <nav className="flex items-center justify-between bg-[#2b2f26] px-6 py-4 text-[#f4efe3]">
       <div className="flex gap-6">
         
-        {/* 🔒 PESTAÑAS EXCLUSIVAS PARA EL ADMINISTRADOR */}
+        
         {token && role === "Administrador" && (
-          <>
+                  <>
+            <Link to="/home" className="hover:underline">Inicio</Link>
             <Link to="/cursos" className="hover:underline">Cursos</Link>
             <Link to="/profesores" className="hover:underline">Profesores</Link>
             <Link to="/categorias" className="hover:underline">Categorías</Link>
@@ -37,12 +38,11 @@ export default function Navbar() {
           </>
         )}
 
-        {/* 🎓 PESTAÑAS EXCLUSIVAS PARA EL ESTUDIANTE */}
+        
         {token && role === "Estudiante" && (
           <>
-            <Link to="/cursos" className="hover:underline font-semibold text-[#d9b65c]">Cursos Disponibles</Link>
-            {/* Si tienes una vista para ver las clases matriculadas, puedes ponerla aquí, por ejemplo: */}
-            {/* <Link to="/matriculas" className="hover:underline">Mis Matrículas</Link> */}
+                      <Link to="/cursos" className="hover:underline font-semibold text-[#d9b65c]">Cursos Disponibles</Link>
+                      <Link to="/matriculas" className="hover:underline font-semibold text-[#d9b65c]">Mis Cursos</Link>
           </>
         )}
         

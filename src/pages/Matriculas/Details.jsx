@@ -11,8 +11,8 @@ export default function DetailsMatricula() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5080/api/matriculas/${id}`)
-      .then((res) => setMatricula(res.data))
+      .get(`http://localhost:5080/api/Matriculas/${id}`)
+        .then((res) => setMatricula(res.data))
       .catch(() => setError("No se pudo cargar la matrícula."));
   }, [id]);
 

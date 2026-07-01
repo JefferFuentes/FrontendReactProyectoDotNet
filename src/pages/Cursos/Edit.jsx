@@ -28,7 +28,6 @@ export default function EditCurso() {
       const token = localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
-      // 1️⃣ Cargamos de manera segura todo con el token de seguridad
       const [cursoRes, profesoresRes, categoriasRes] = await Promise.all([
         axios.get(`http://localhost:5080/api/cursos/${id}`, config),
         axios.get("http://localhost:5080/api/profesores", config),
@@ -44,7 +43,6 @@ export default function EditCurso() {
       setProfesorId(curso.profesorId || "");
       setCategoriaId(curso.categoriaId || "");
 
-      // 🔹 Limpieza obligatoria del formato bizarro de .NET ($values)
       const listaProfesores = profesoresRes.data.$values || profesoresRes.data.data || profesoresRes.data;
       const listaCategorias = categoriasRes.data.$values || categoriasRes.data.data || categoriasRes.data;
 
@@ -53,7 +51,7 @@ export default function EditCurso() {
       setLoading(false);
     } catch (err) {
       console.error(err);
-      // Si falla la carga (por token expirado o ID inválido) volvemos de manera segura
+      
       navigate("/cursos");
     }
   };
@@ -65,7 +63,7 @@ export default function EditCurso() {
     try {
       const token = localStorage.getItem("token");
 
-      // 🛠️ SOLUCIÓN: Limpiamos y casteamos el payload exactamente como .NET lo exige
+   
       const payload = {
         id: Number(id),
         titulo: titulo,

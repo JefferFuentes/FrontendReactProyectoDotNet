@@ -10,12 +10,24 @@ export default function EstudianteDetails() {
   const [error, setError] = useState("");
 
   // 🔹 cargar estudiante
-  useEffect(() => {
-    axios
-      .get(`http://localhost:5080/api/estudiantes/${id}`)
-      .then(res => setEstudiante(res.data))
-      .catch(() => setError("No se pudo cargar el estudiante"));
-  }, [id]);
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+
+        axios
+            .get(`http://localhost:5080/api/Usuarios/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            .then((res) => {
+                setEstudiante(res.data);
+                setLoading(false);
+            })
+            .catch(() => {
+                setError("Error al obtener al estudiante");
+                setLoading(false);
+            });
+    }, [id]);
 
   if (error) return <p className="text-red-600">{error}</p>;
   if (!estudiante) return <p>Cargando...</p>;

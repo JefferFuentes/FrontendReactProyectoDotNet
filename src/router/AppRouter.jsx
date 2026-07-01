@@ -23,15 +23,15 @@ import CategoriasEdit from "../pages/Categorias/Edit";
 import CategoriasDetails from "../pages/Categorias/Details";
 import CategoriasDelete from "../pages/Categorias/Delete";
 
-// 🛠️ Importaciones de Estudiantes (Físicamente existentes en tu carpeta)
 import EstudiantesIndex from "../pages/Estudiantes/Index";
 import EstudiantesCreate from "../pages/Estudiantes/Create";
 import EstudiantesEdit from "../pages/Estudiantes/Edit";
 import EstudiantesDetails from "../pages/Estudiantes/Details";
 import EstudiantesDelete from "../pages/Estudiantes/Delete";
 
-// 🛠️ Importaciones de Matrículas (Solo Index existe según tu captura)
+
 import MatriculasIndex from "../pages/Matriculas/Index";
+import MatriculasDelete from "../pages/Matriculas/Delete";
 
 function rutasCrud(base, { Index, Create, Edit, Details, Delete }) {
   return (
@@ -58,7 +58,8 @@ export default function AppRouter() {
       <Route path="/" element={<Navigate to="/login" />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
-      <Route path="/home" element={<Home />} />
+          <Route path="/home" element={<Home />} />
+
 
       <Route element={<PrivateLayout />}>
         {rutasCrud("/cursos", {
@@ -85,12 +86,11 @@ export default function AppRouter() {
           Delete: CategoriasDelete,
         })}
 
-        {/* 🛠️ Solo mapeamos Index para evitar que React explote */}
         {rutasCrud("/matriculas", {
-          Index: MatriculasIndex
+            Index: MatriculasIndex,
+            Delete: MatriculasDelete,
         })}
 
-        {/* 🛠️ Mapeado completo porque en Estudiantes sí tienes todos los archivos creados */}
         {rutasCrud("/estudiantes", {
           Index: EstudiantesIndex,
           Create: EstudiantesCreate,

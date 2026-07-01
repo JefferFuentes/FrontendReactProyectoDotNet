@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode"; // 1. Importamos el decodificador
 
+import Navbar from "../../components/layout/Navbar";
+
 export default function Home() {
   const navigate = useNavigate();
 
@@ -10,7 +12,7 @@ export default function Home() {
 
     if (token) {
       try {
-        // 2. Decodificamos el JWT para extraer los datos que Alejandro guardó
+        // 2. Decodificamos el JWT para extraer los datos que se guardó
         const decoded = jwtDecode(token);
         
         // 3. Extraemos el Claim de Rol exacto que genera .NET Core

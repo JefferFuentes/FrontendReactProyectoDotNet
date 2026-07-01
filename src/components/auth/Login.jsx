@@ -19,7 +19,8 @@ export default function Login() {
       });
 
       // Guardar token
-      localStorage.setItem("token", response.data.token);
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("rol", response.data.usuario.rol); // ← así
 
       // Redirigir
       navigate("/home");

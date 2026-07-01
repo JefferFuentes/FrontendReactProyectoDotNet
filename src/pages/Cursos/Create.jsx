@@ -80,7 +80,7 @@ export default function CreateCurso() {
           {error}
         </div>
       )}
-
+    <div className="mt-4">
       <CursoForm
         profesores={profesores}
         categorias={categorias}
@@ -88,7 +88,6 @@ export default function CreateCurso() {
         textoBoton="Crear curso"
       />
 
-      <div className="mt-4">
         <button
           onClick={() => navigate("/cursos")}
           className="text-sm font-medium text-gray-500 hover:text-gray-900 cursor-pointer"
