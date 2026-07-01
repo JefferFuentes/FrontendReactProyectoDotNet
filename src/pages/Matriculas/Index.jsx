@@ -9,32 +9,32 @@ export default function MatriculasList() {
 
   const navigate = useNavigate();
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        const rol = localStorage.getItem("rol");
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const rol = localStorage.getItem("rol");
 
-        const url = rol === "Administrador"
-            ? "http://localhost:5080/api/Matriculas"
-            : "http://localhost:5080/api/Matriculas/mis-matriculas";
+    const url = rol === "Administrador"
+      ? "http://localhost:5080/api/Matriculas"
+      : "http://localhost:5080/api/Matriculas/mis-matriculas";
 
-        axios
-            .get(url, {
-                headers: { Authorization: `Bearer ${token}` }
-            })
-            .then((res) => {
-                setMatriculas(res.data);
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.log("Status:", err.response?.status);
-                console.log("Error:", err.response?.data);
-                setError("Error: " + err.response?.status);
-                setLoading(false);
-            });
-    }, []);
+    axios
+      .get(url, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then((res) => {
+        setMatriculas(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("Status:", err.response?.status);
+        console.log("Error:", err.response?.data);
+        setError("Error: " + err.response?.status);
+        setLoading(false);
+      });
+  }, []);
 
-    if (loading) return <p>Cargando...</p>;
-    if (error) return <p>{error}</p>; // ← agregar esto
+  if (loading) return <p>Cargando...</p>;
+  if (error) return <p>{error}</p>; // ← agregar esto
 
   return (
     <div className="mt-8">
@@ -61,13 +61,36 @@ export default function MatriculasList() {
         <table className="w-full text-left">
           <thead>
             <tr className="border-b bg-gray-50">
+
               <th className="px-5 py-3 text-sm font-medium text-gray-500">
-                Estudiante
+                ID
               </th>
+
               <th className="px-5 py-3 text-sm font-medium text-gray-500">
                 Curso
               </th>
-              <th></th>
+
+              <th className="px-5 py-3 text-sm font-medium text-gray-500">
+                Profesor
+              </th>
+
+              <th className="px-5 py-3 text-sm font-medium text-gray-500">
+                Fecha
+              </th>
+
+              <th className="px-5 py-3 text-sm font-medium text-gray-500">
+                Monto
+              </th>
+
+              <th className="px-5 py-3 text-sm font-medium text-gray-500">
+                Estado
+              </th>
+
+              <th className="px-5 py-3 text-sm font-medium text-gray-500">
+                Acciones
+              </th>
+
+
             </tr>
           </thead>
 
@@ -84,26 +107,53 @@ export default function MatriculasList() {
                   key={item.id}
                   className="border-b last:border-0 hover:bg-gray-50"
                 >
-                  <td className="px-5 py-3 font-medium text-gray-900">
-                    {item.usuario?.nombre}
+
+                  <td className="px-5 py-3">
+                    {item.id}
                   </td>
 
-                  <td className="px-5 py-3 text-gray-500">
+                  <td className="px-5 py-3 font-medium text-gray-900">
                     {item.curso?.titulo}
                   </td>
 
-                  <td className="px-5 py-3 text-right text-sm">
+                  <td className="px-5 py-3">
+                    {item.curso?.profesor?.nombre}
+                  </td>
 
+                  <td className="px-5 py-3">
+                    {new Date(item.fechaInscripcion)
+                      .toLocaleDateString("es-CR")}
+                  </td>
 
-                    <span className="mx-1 text-gray-300">|</span>
+                  <td className="px-5 py-3">
+                    ${Number(item.monto).toLocaleString("es-CR")}
+                  </td>
 
+                  <td className="px-5 py-3">
+
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-sm font-medium
+                      ${item.pagado
+                          ? "bg-green-100 text-green-700"
+                          : "bg-yellow-100 text-yellow-700"
+                        }`}
+                    >
+                      {item.pagado ? "Pagado" : "Pendiente"}
+                    </span>
+
+                  </td>
+
+                  <td className="px-5 py-3">
                     <button
-                      onClick={() => navigate(`/matriculas/delete/${item.id}`)}
+                      onClick={() =>
+                        navigate(`/matriculas/delete/${item.id}`)
+                      }
                       className="font-medium text-red-600 hover:text-red-800"
                     >
-                      Eliminar
+                      Cancelar
                     </button>
                   </td>
+
                 </tr>
               ))
             )}
