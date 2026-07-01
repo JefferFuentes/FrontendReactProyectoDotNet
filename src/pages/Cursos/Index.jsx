@@ -7,13 +7,13 @@ export default function CursosList() {
   const [cursos, setCursos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [userRole, setUserRole] = useState(null); 
+  const [userRole, setUserRole] = useState(null);
 
   const navigate = useNavigate();
 
-useEffect(() => {
+  useEffect(() => {
     const token = localStorage.getItem("token");
-    
+
     if (token) {
       // 🔑 Leemos directamente el rol en texto plano guardado en el Login
       const userRol = localStorage.getItem("rol");
@@ -37,21 +37,6 @@ useEffect(() => {
       });
   }, []);
 
-  // 🔹 Función para que el estudiante se matricule
-  const handleMatricular = async (cursoId) => {
-    try {
-      const token = localStorage.getItem("token");
-      
-      await axios.post("http://localhost:5080/api/matriculas/matricular", 
-        { cursoId: Number(cursoId) }, // Casteado a número por seguridad para la API
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      alert("¡Inscripción exitosa! El curso ha sido añadido a tus matrículas.");
-    } catch (err) {
-      alert("Error en la matrícula: " + (err.response?.data?.message || err.message));
-    }
-  };
 
   if (loading) return <p className="text-center mt-10 font-serif">Cargando...</p>;
 
@@ -102,14 +87,14 @@ useEffect(() => {
                   <p className="text-xs text-gray-400 mb-1">Duración: {item.duracionHoras} horas</p>
                   <p className="text-xs text-gray-400">Profesor: {item.profesor?.nombre || "Por asignar"}</p>
                 </div>
-                
+
                 <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-4">
                   <span className="text-xl font-bold text-[#2b2f26]">₡{item.precio?.toLocaleString()}</span>
                   <button
-                    onClick={() => handleMatricular(item.id)}
+                    onClick={() => navigate(`/cursos/comprar/${item.id}`)}
                     className="cursor-pointer rounded-lg bg-[#2b2f26] px-4 py-2 text-sm font-semibold text-[#f4efe3] transition hover:bg-[#1e211a]"
                   >
-                    Matricularme
+                    Comprar curso
                   </button>
                 </div>
               </div>
@@ -117,7 +102,7 @@ useEffect(() => {
           )}
         </div>
       ) : (
-        
+
         // 🔒 VISTA DEL ADMINISTRADOR: Tabla original de tus compañeros
         <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
           <table className="w-full text-left">

@@ -1,5 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
+import PagoExitoso from "../pages/Pagos/PagoExitoso";
+import PagoCancelado from "../pages/Pagos/PagoCancelado";
+import CursoComprar from "../pages/Cursos/Comprar";
 import LandingPage from "../pages/Landing/Index";
 import LoginPage from "../pages/Account/LoginPage";
 import RegisterPage from "../pages/Account/RegisterPage";
@@ -38,16 +41,16 @@ function rutasCrud(base, { Index, Create, Edit, Details, Delete }) {
   return (
     <>
       <Route path={base} element={<Index />} />
-      
+
       {Create && <Route path={`${base}/crear`} element={<Create />} />}
       {Create && <Route path={`${base}/create`} element={<Create />} />}
-      
+
       {Edit && <Route path={`${base}/edit/:id`} element={<Edit />} />}
       {Edit && <Route path={`${base}/:id/editar`} element={<Edit />} />}
-      
+
       {Delete && <Route path={`${base}/:id/eliminar`} element={<Delete />} />}
       {Delete && <Route path={`${base}/delete/:id`} element={<Delete />} />}
-      
+
       {Details && <Route path={`${base}/:id`} element={<Details />} />}
     </>
   );
@@ -59,10 +62,19 @@ export default function AppRouter() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
-          <Route path="/home" element={<Home />} />
+      <Route path="/home" element={<Home />} />
 
 
       <Route element={<PrivateLayout />}>
+
+        <Route
+          path="/cursos/comprar/:id"
+          element={<CursoComprar />}
+        />
+
+        <Route path="/pago-exitoso" element={<PagoExitoso />} />
+        <Route path="/pago-cancelado" element={<PagoCancelado />} />
+
         {rutasCrud("/cursos", {
           Index: CursosIndex,
           Create: CursosCreate,
@@ -88,8 +100,8 @@ export default function AppRouter() {
         })}
 
         {rutasCrud("/matriculas", {
-            Index: MatriculasIndex,
-            Delete: MatriculasDelete,
+          Index: MatriculasIndex,
+          Delete: MatriculasDelete,
         })}
 
         {rutasCrud("/estudiantes", {
