@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
+import LandingPage from "../pages/Landing/Index";
 import LoginPage from "../pages/Account/LoginPage";
 import RegisterPage from "../pages/Account/RegisterPage";
 import Home from "../pages/Home/Index";
@@ -51,7 +52,7 @@ function rutasCrud(base, { Index, Create, Edit, Details, Delete }) {
 export default function AppRouter() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login" />} />
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/home" element={<Home />} />
@@ -85,8 +86,8 @@ export default function AppRouter() {
         {/* 🔐 2. RUTAS EXCLUSIVAS PARA EL ROL ADMINISTRADOR */}
         <Route element={<ProtectedRoute rolesPermitidos={["Administrador"]} />}>
           {rutasCrud("/matriculas", {
-              Index: MatriculasIndex,
-              Delete: MatriculasDelete,
+            Index: MatriculasIndex,
+            Delete: MatriculasDelete,
           })}
 
           {rutasCrud("/estudiantes", {
