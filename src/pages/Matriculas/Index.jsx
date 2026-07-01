@@ -33,6 +33,8 @@ export default function MatriculasList() {
       });
   }, []);
 
+  const rol = localStorage.getItem("rol");
+
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>{error}</p>; // ← agregar esto
 
@@ -47,8 +49,13 @@ export default function MatriculasList() {
           </p>
 
           <h1 className="font-serif text-3xl font-bold text-gray-900">
-            Matrículas
+
+            {rol === "Administrador"
+              ? "Todas las Matrículas"
+              : "Mis Matrículas"}
+
           </h1>
+
         </div>
 
       </div>
@@ -85,6 +92,11 @@ export default function MatriculasList() {
               <th className="px-5 py-3 text-sm font-medium text-gray-500">
                 Estado
               </th>
+
+
+              {rol === "Administrador" && (
+                <th className="px-5 py-3 text-sm font-medium text-gray-500">Estudiante</th>
+              )}
 
               <th className="px-5 py-3 text-sm font-medium text-gray-500">
                 Acciones
@@ -142,6 +154,10 @@ export default function MatriculasList() {
                     </span>
 
                   </td>
+
+                  {rol === "Administrador" && (
+                    <td className="px-5 py-3">{item.usuario?.nombre}</td>
+                  )}
 
                   <td className="px-5 py-3">
                     <button
