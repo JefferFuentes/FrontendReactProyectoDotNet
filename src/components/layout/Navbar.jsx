@@ -1,24 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   
-  let role = null;
-
-  // Extraemos el rol de forma segura desde el JWT
-  if (token) {
-    try {
-      const decoded = jwtDecode(token);
-      role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-    } catch (e) {
-      console.error("Error decodificando token en Navbar", e);
-    }
-  }
+  // 🔑 Leemos directamente el texto plano guardado ("Administrador" o "Estudiante")
+  const role = localStorage.getItem("rol");
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("rol"); // 🛠️ SOLUCIÓN: Limpiamos también el rol para evitar colisiones
     navigate("/login");
   };
 
@@ -26,9 +17,9 @@ export default function Navbar() {
     <nav className="flex items-center justify-between bg-[#2b2f26] px-6 py-4 text-[#f4efe3]">
       <div className="flex gap-6">
         
-        
+        {/* 🔐 VISTA PARA ADMINISTRADORES */}
         {token && role === "Administrador" && (
-                  <>
+          <>
             <Link to="/home" className="hover:underline">Inicio</Link>
             <Link to="/cursos" className="hover:underline">Cursos</Link>
             <Link to="/profesores" className="hover:underline">Profesores</Link>
@@ -38,11 +29,11 @@ export default function Navbar() {
           </>
         )}
 
-        
+        {/* 🎓 VISTA PARA ESTUDIANTES */}
         {token && role === "Estudiante" && (
           <>
-                      <Link to="/cursos" className="hover:underline font-semibold text-[#d9b65c]">Cursos Disponibles</Link>
-                      <Link to="/matriculas" className="hover:underline font-semibold text-[#d9b65c]">Mis Cursos</Link>
+            <Link to="/cursos" className="hover:underline font-semibold text-[#d9b65c]">Cursos Disponibles</Link>
+            <Link to="/matriculas" className="hover:underline font-semibold text-[#d9b65c]">Mis Cursos</Link>
           </>
         )}
         

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode"; 
+
 
 export default function CursosList() {
   const [cursos, setCursos] = useState([]);
@@ -11,17 +11,13 @@ export default function CursosList() {
 
   const navigate = useNavigate();
 
-  // 🔹 Cargar cursos y detectar rol
-  useEffect(() => {
+useEffect(() => {
     const token = localStorage.getItem("token");
+    
     if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-        setUserRole(role);
-      } catch (e) {
-        console.error("Error al decodificar token en CursosList", e);
-      }
+      // 🔑 Leemos directamente el rol en texto plano guardado en el Login
+      const userRol = localStorage.getItem("rol");
+      setUserRole(userRol); // Cambiado para asignar "Administrador" o "Estudiante" directo
     }
 
     // 🛠️ SOLUCIÓN: Agregamos las cabeceras con el token de seguridad
